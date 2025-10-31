@@ -1,0 +1,186 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Dashboard from './components/Dashboard';
+import ErrorBoundary from './components/ErrorBoundary';
+import './App.css';
+
+const About = () => (
+  <div className="page">
+    <h2>About This Dashboard</h2>
+    <p>This is a responsive user dashboard built with React Router and styled using CSS.</p>
+  </div>
+);
+
+function App() {
+  return (
+    <Router>
+      <nav className="navbar">
+        <h1>User Dashboard</h1>
+        <div>
+          <Link to="/">Dashboard</Link>
+          <Link to="/about">About</Link>
+        </div>
+      </nav>
+
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </ErrorBoundary>
+    </Router>
+  );
+}
+
+export default App;
+
+import React, { useState } from 'react';
+import TabNavigation from './TabNavigation';
+import Profile from './Profile';
+import Settings from './Settings';
+import Notifications from './Notifications';
+
+const Dashboard = () => {
+  const [activeTab, setActiveTab] = useState('Profile');
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'Profile':
+        return <Profile />;
+      case 'Settings':
+        return <Settings />;
+      case 'Notifications':
+        return <Notifications />;
+      default:
+        return <Profile />;
+    }
+  };
+
+  return (
+    <div className="dashboard">
+      <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className="tab-content">{renderContent()}</div>
+    </div>
+  );
+};
+
+export default Dashboard;
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f5f5f5;
+}
+
+.navbar {
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+.dashboard {
+  background: white;
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 800px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #ccc;
+}
+
+.tab-nav {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.tab-nav button {
+  border: none;
+  background: #e0e0e0;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.tab-nav button.active {
+  background: #007bff;
+  color: white;
+}
+
+.page, .tab-content {
+  text-align: left;
+  padding: 10px;
+}
+
+@media (max-width: 600px) {
+  .dashboard {
+    width: 95%;
+  }
+
+  .tab-nav button {
+    flex: 1 1 100%;
+  }
+}
+
+import React from 'react';
+import ModalPortal from './ModalPortal';
+
+const Profile = () => {
+  const [showModal, setShowModal] = React.useState(false);
+
+  return (
+    <div>
+      <h2>👤 Profile</h2>
+      <p>Name: John Doe</p>
+      <p>Role: Student</p>
+      <button onClick={() => setShowModal(true)}>View Details (Portal)</button>
+
+      {showModal && (
+        <ModalPortal onClose={() => setShowModal(false)}>
+          <h3>Profile Details</h3>
+          <p>Email: john@example.com</p>
+          <p>Department: Computer Science</p>
+          <button onClick={() => setShowModal(false)}>Close</button>
+        </ModalPortal>
+      )}
+    </div>
+  );
+};
+
+export default Profile;
+
+import React from 'react';
+
+const TabNavigation = ({ activeTab, setActiveTab }) => {
+  const tabs = ['Profile', 'Settings', 'Notifications'];
+
+  return (
+    <div className="tab-nav">
+      {tabs.map(tab => (
+        <button
+          key={tab}
+          className={activeTab === tab ? 'active' : ''}
+          onClick={() => setActiveTab(tab)}
+        >
+          {tab}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+export default TabNavigation;
